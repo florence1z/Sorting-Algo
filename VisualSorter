@@ -1,0 +1,57 @@
+import tkinter as tk
+import random
+import time
+
+class SortVisualizer:
+    def __init__(self, root):
+        self.root = root
+        self.canvas = tk.Canvas(self.root, bg="white", height=400, width=600)
+        self.canvas.pack(pady=20)
+        self.array = [random.randint(10, 350) for _ in range(50)]
+        self.render_array(self.array)
+
+        self.sort_btn = tk.Button(root, text="Sort", command=self.bubble_sort)
+        self.sort_btn.pack()
+
+        self.shuffle_btn = tk.Button(root, text="Shuffle", command=self.shuffle)
+        self.shuffle_btn.pack()
+
+    def render_array(self, array):
+        self.canvas.delete("all")
+        c_width = 600
+        c_height = 400
+        bar_width = c_width / len(array)
+        offset = 5
+        spacing = 2
+
+        normalized_array = [i / max(array) for i in array]
+
+        for i, val in enumerate(normalized_array):
+            # calculate position and height
+            x0 = i * bar_width + offset + spacing
+            y0 = c_height - (val * c_height)
+            x1 = (i + 1) * bar_width + offset
+            y1 = c_height
+            self.canvas.create_rectangle(x0, y0, x1, y1, fill="blue", tag="bar")
+
+        self.root.update_idletasks()
+
+    def bubble_sort(self):
+        n = len(self.array)
+        for i in range(n):
+            for j in range(0, n-i-1):
+                if self.array[j] > self.array[j+1]:
+                    self.array[j], self.array[j+1] = self.array[j+1], self.array[j]
+                    self.render_array(self.array)
+                    time.sleep(0.1)
+
+    def shuffle(self):
+        random.shuffle(self.array)
+        self.render_array(self.array)
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Bubble Sort Visualizer")
+    visualizer = SortVisualizer(root)
+    root.mainloop()
